@@ -22,6 +22,11 @@ export default function App() {
 
   const [hoverInfo, setHoverInfo] = useState(null);
 
+  // ✅ collapsible panels
+  const [leftOpen, setLeftOpen] = useState(true);
+  const [rightOpen, setRightOpen] = useState(true);
+
+  // ✅ viewState moved to App (supports fly-to)
   const [viewState, setViewState] = useState({
     longitude: 0,
     latitude: 20,
@@ -30,6 +35,7 @@ export default function App() {
     bearing: 0,
   });
 
+  // region presets
   const focusPresets = useMemo(
     () => ({
       global: { longitude: 0, latitude: 20, zoom: 1.6 },
@@ -70,7 +76,7 @@ export default function App() {
 
   useEffect(() => {
     load(timeRange);
-    
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [timeRange]);
 
   const quakes = useMemo(() => {
@@ -148,7 +154,6 @@ export default function App() {
       if (info.object) {
         const obj = info.object;
 
-        // safer count
         const count =
           typeof obj.count === "number"
             ? obj.count
@@ -225,6 +230,8 @@ export default function App() {
   return (
     <div style={{ height: "100vh", width: "100vw", position: "relative" }}>
       <Controls
+        isOpen={leftOpen}
+        onToggle={() => setLeftOpen((v) => !v)}
         timeRange={timeRange}
         setTimeRange={setTimeRange}
         mode={mode}
@@ -244,10 +251,12 @@ export default function App() {
         onRefresh={() => load(timeRange)}
         err={err}
         summary={summary}
-        onFocusRegion={focusRegion} 
+        onFocusRegion={focusRegion}
       />
 
       <InsightPanel
+        isOpen={rightOpen}
+        onToggle={() => setRightOpen((v) => !v)}
         summary={summary}
         selected={selected}
         selectedHex={selectedHex}

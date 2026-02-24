@@ -3,6 +3,7 @@ import "maplibre-gl/dist/maplibre-gl.css";
 import { DeckGL } from "@deck.gl/react";
 import { ScatterplotLayer } from "@deck.gl/layers";
 import { HexagonLayer } from "deck.gl";
+import { COORDINATE_SYSTEM } from "@deck.gl/core";
 
 export default function QuakeMap({
   viewState,
@@ -18,6 +19,9 @@ export default function QuakeMap({
           new HexagonLayer({
             id: "quakes-hex",
             data: quakes,
+            coordinateSystem: COORDINATE_SYSTEM.LNGLAT,
+            wrapLongitude: true,
+
             getPosition: (d) => [d.lon, d.lat],
             radius: 120000,
             elevationScale: 140,
@@ -32,6 +36,9 @@ export default function QuakeMap({
           new ScatterplotLayer({
             id: "quakes-points",
             data: quakes,
+            coordinateSystem: COORDINATE_SYSTEM.LNGLAT,
+            wrapLongitude: true,
+
             getPosition: (d) => [d.lon, d.lat],
             getRadius: (d) => Math.max(15000, (d.mag ?? 2) * 25000),
             radiusMinPixels: 2,
@@ -56,7 +63,10 @@ export default function QuakeMap({
       onClick={onClick}
       onHover={onHover}
     >
-      <Map mapStyle="https://basemaps.cartocdn.com/gl/positron-gl-style/style.json" />
+      <Map
+        renderWorldCopies={true}
+        mapStyle="https://basemaps.cartocdn.com/gl/positron-gl-style/style.json"
+      />
     </DeckGL>
   );
 }

@@ -13,7 +13,18 @@ export default function Controls({
   onRefresh,
   err,
   summary,
+  onFocusRegion, 
 }) {
+  const btnStyle = {
+    padding: "6px 8px",
+    borderRadius: 10,
+    border: "1px solid rgba(255,255,255,0.2)",
+    background: "rgba(255,255,255,0.08)",
+    color: "white",
+    cursor: "pointer",
+    fontSize: 12,
+  };
+
   return (
     <div
       style={{
@@ -34,6 +45,33 @@ export default function Controls({
       </div>
       <div style={{ fontSize: 12, opacity: 0.9, marginBottom: 10 }}>
         Data: USGS feed. Use controls to filter and switch layers.
+      </div>
+
+      {/* ✅ Region focus buttons */}
+      <div style={{ marginBottom: 10 }}>
+        <div style={{ fontSize: 12, opacity: 0.9, marginBottom: 6 }}>
+          Region focus
+        </div>
+        <div style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>
+          <button style={btnStyle} onClick={() => onFocusRegion("global")}>
+            Global
+          </button>
+          <button style={btnStyle} onClick={() => onFocusRegion("ringOfFire")}>
+            Ring of Fire
+          </button>
+          <button style={btnStyle} onClick={() => onFocusRegion("japan")}>
+            Japan
+          </button>
+          <button style={btnStyle} onClick={() => onFocusRegion("chile")}>
+            Chile
+          </button>
+          <button style={btnStyle} onClick={() => onFocusRegion("med")}>
+            Mediterranean
+          </button>
+          <button style={btnStyle} onClick={() => onFocusRegion("indo")}>
+            Indonesia
+          </button>
+        </div>
       </div>
 
       <div style={{ display: "grid", gap: 10 }}>

@@ -4,7 +4,14 @@ import { DeckGL } from "@deck.gl/react";
 import { ScatterplotLayer } from "@deck.gl/layers";
 import { HexagonLayer } from "deck.gl";
 
-export default function QuakeMap({ initialViewState, quakes, mode, onClick, onHover,}) {
+export default function QuakeMap({
+  viewState,
+  onViewStateChange,
+  quakes,
+  mode,
+  onClick,
+  onHover,
+}) {
   const layers =
     mode === "hex"
       ? [
@@ -12,12 +19,12 @@ export default function QuakeMap({ initialViewState, quakes, mode, onClick, onHo
             id: "quakes-hex",
             data: quakes,
             getPosition: (d) => [d.lon, d.lat],
-            radius: 60000,
-            elevationScale: 80,
+            radius: 120000,
+            elevationScale: 140,
             extruded: true,
             pickable: true,
             opacity: 0.65,
-            coverage: 0.9,
+            coverage: 1,
             upperPercentile: 95,
           }),
         ]
@@ -42,9 +49,10 @@ export default function QuakeMap({ initialViewState, quakes, mode, onClick, onHo
 
   return (
     <DeckGL
-      initialViewState={initialViewState}
+      viewState={viewState}
       controller
       layers={layers}
+      onViewStateChange={(e) => onViewStateChange(e.viewState)}
       onClick={onClick}
       onHover={onHover}
     >

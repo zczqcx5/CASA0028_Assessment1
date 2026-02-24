@@ -1,4 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
+import { FlyToInterpolator } from "@deck.gl/core";
+
 import Controls from "./components/Controls";
 import QuakeMap from "./components/QuakeMap";
 import InsightPanel from "./components/InsightPanel";
@@ -20,10 +22,35 @@ export default function App() {
 
   const [hoverInfo, setHoverInfo] = useState(null);
 
-  const initialViewState = useMemo(
-    () => ({ longitude: 0, latitude: 20, zoom: 1.6, pitch: 0, bearing: 0 }),
+  const [viewState, setViewState] = useState({
+    longitude: 0,
+    latitude: 20,
+    zoom: 1.6,
+    pitch: 0,
+    bearing: 0,
+  });
+
+  const focusPresets = useMemo(
+    () => ({
+      global: { longitude: 0, latitude: 20, zoom: 1.6 },
+      ringOfFire: { longitude: -150, latitude: 10, zoom: 2.2 },
+      japan: { longitude: 138.5, latitude: 37.5, zoom: 4.2 },
+      chile: { longitude: -72.0, latitude: -33.0, zoom: 4.0 },
+      med: { longitude: 15.0, latitude: 39.0, zoom: 4.0 },
+      indo: { longitude: 118.0, latitude: -2.0, zoom: 3.6 },
+    }),
     []
   );
+
+  function focusRegion(key) {
+    const target = focusPresets[key] || focusPresets.global;
+    setViewState((vs) => ({
+      ...vs,
+      ...target,
+      transitionDuration: 1100,
+      transitionInterpolator: new FlyToInterpolator(),
+    }));
+  }
 
   async function load(rangeKey) {
     try {
@@ -43,7 +70,7 @@ export default function App() {
 
   useEffect(() => {
     load(timeRange);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    
   }, [timeRange]);
 
   const quakes = useMemo(() => {
@@ -73,7 +100,7 @@ export default function App() {
     };
   }, [quakes]);
 
-  // ✅ NEW: distributions linked to current filters
+  // mini chart bins
   const magBins = useMemo(() => {
     const bins = [
       { label: "0–2", count: 0 },
@@ -119,12 +146,26 @@ export default function App() {
 
     if (mode === "hex") {
       if (info.object) {
-        const pts = info.object.points || [];
-        let max = null;
-        for (const p of pts) {
-          if (p.mag != null) max = max == null ? p.mag : Math.max(max, p.mag);
+        const obj = info.object;
+
+        // safer count
+        const count =
+          typeof obj.count === "number"
+            ? obj.count
+            : Array.isArray(obj.points)
+            ? obj.points.length
+            : 0;
+
+        let maxMag = null;
+        const pts = Array.isArray(obj.points) ? obj.points : null;
+        if (pts) {
+          for (const p of pts) {
+            if (p.mag != null)
+              maxMag = maxMag == null ? p.mag : Math.max(maxMag, p.mag);
+          }
         }
-        setSelectedHex({ count: pts.length, maxMag: max });
+
+        setSelectedHex({ count, maxMag });
       } else {
         setSelectedHex(null);
       }
@@ -153,17 +194,29 @@ export default function App() {
     }
 
     if (mode === "hex") {
-      const pts = info.object.points || [];
+      const obj = info.object;
+
+      const count =
+        typeof obj.count === "number"
+          ? obj.count
+          : Array.isArray(obj.points)
+          ? obj.points.length
+          : 0;
+
       let maxMag = null;
-      for (const p of pts) {
-        if (p.mag != null)
-          maxMag = maxMag == null ? p.mag : Math.max(maxMag, p.mag);
+      const pts = Array.isArray(obj.points) ? obj.points : null;
+      if (pts) {
+        for (const p of pts) {
+          if (p.mag != null)
+            maxMag = maxMag == null ? p.mag : Math.max(maxMag, p.mag);
+        }
       }
+
       setHoverInfo({
         x: info.x,
         y: info.y,
         kind: "hex",
-        count: pts.length,
+        count,
         maxMag,
       });
     }
@@ -191,6 +244,7 @@ export default function App() {
         onRefresh={() => load(timeRange)}
         err={err}
         summary={summary}
+        onFocusRegion={focusRegion} 
       />
 
       <InsightPanel
@@ -202,13 +256,15 @@ export default function App() {
       />
 
       <QuakeMap
-        initialViewState={initialViewState}
+        viewState={viewState}
+        onViewStateChange={setViewState}
         quakes={quakes}
         mode={mode}
         onClick={handleClick}
         onHover={handleHover}
       />
 
+      {/* Tooltip overlay */}
       {hoverInfo ? (
         <div
           style={{

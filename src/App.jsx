@@ -22,11 +22,11 @@ export default function App() {
 
   const [hoverInfo, setHoverInfo] = useState(null);
 
-  // ✅ collapsible panels
+  
   const [leftOpen, setLeftOpen] = useState(true);
   const [rightOpen, setRightOpen] = useState(true);
 
-  // ✅ viewState moved to App (supports fly-to)
+  
   const [viewState, setViewState] = useState({
     longitude: 0,
     latitude: 20,
@@ -35,7 +35,7 @@ export default function App() {
     bearing: 0,
   });
 
-  // region presets
+
   const focusPresets = useMemo(
     () => ({
       global: { longitude: 0, latitude: 20, zoom: 1.6 },
@@ -76,7 +76,7 @@ export default function App() {
 
   useEffect(() => {
     load(timeRange);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    
   }, [timeRange]);
 
   const quakes = useMemo(() => {
@@ -106,7 +106,7 @@ export default function App() {
     };
   }, [quakes]);
 
-  // mini chart bins
+  
   const magBins = useMemo(() => {
     const bins = [
       { label: "0–2", count: 0 },

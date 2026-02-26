@@ -62,29 +62,45 @@ export default function Controls({
             borderRadius: 12,
           }}
         >
-          <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-            <div style={{ fontWeight: 800, flex: 1 }}>
-              Global Earthquakes Explorer
-            </div>
-            <button
-              onClick={onToggle}
-              style={{
-                border: "none",
-                background: "rgba(255,255,255,0.12)",
-                color: "white",
-                borderRadius: 10,
-                padding: "6px 8px",
-                cursor: "pointer",
-              }}
-              title="Collapse controls"
-            >
-              ⇤
-            </button>
-          </div>
+          <div style={{ display: "flex", alignItems: "flex-start", gap: 8 }}>
+  <div style={{ flex: 1 }}>
+    <div style={{ fontWeight: 900, fontSize: 16, letterSpacing: 0.2 }}>
+      QuakeScope — Global Earthquake Explorer
+    </div>
 
-          <div style={{ fontSize: 12, opacity: 0.9, marginTop: 6, marginBottom: 10 }}>
-            Data: USGS feed. Use controls to filter and switch layers.
-          </div>
+ <div style={{ fontSize: 12, opacity: 0.92, marginTop: 6, lineHeight: 1.45 }}>
+  QuakeScope is an interactive spatial data application for exploring the
+  global distribution of recent seismic events. It supports exploratory
+  analysis by enabling users to filter earthquakes by <b>magnitude</b> and{" "}
+  <b>depth</b>, compare alternative visual encodings (<b>event-level points</b>{" "}
+  versus <b>spatial aggregation</b>), and navigate between predefined
+  tectonically active regions to facilitate cross-regional interpretation of
+  seismicity patterns.
+</div>
+
+<div style={{ fontSize: 12, opacity: 0.85, marginTop: 8, lineHeight: 1.4 }}>
+  Data are retrieved from USGS near-real-time GeoJSON feeds (past day/week/month).
+  Hover and click interactions provide event-level inspection, while hotspot
+  selection summarises local concentrations under the current filter settings.
+</div>
+  </div>
+
+  <button
+    onClick={onToggle}
+    style={{
+      border: "none",
+      background: "rgba(255,255,255,0.12)",
+      color: "white",
+      borderRadius: 10,
+      padding: "6px 8px",
+      cursor: "pointer",
+      marginTop: 2,
+    }}
+    title="Collapse controls"
+  >
+    ⇤
+  </button>
+</div>
 
           {/* Region focus buttons */}
           <div style={{ marginBottom: 10 }}>
